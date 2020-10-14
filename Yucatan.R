@@ -1,6 +1,6 @@
-########## Creación base 2008 ############
+########## Creación base 2010 ############
 
-#ENIGH 2008
+#ENIGH 2010
 library(foreign)
 library(survey)
 library(doBy)
@@ -8,8 +8,8 @@ library(reldist)
 library(tidyverse)
 options(survey.lonely.psu="adjust")
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/ENIGH2008")
-Conc<-read.dbf("Conc2008.dbf",as.is = T)
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/ENIGH 2010/ENIGH2010")
+Conc<-read.dbf("Conc2010.dbf",as.is = T)
 
 ConcYucatan<-Conc%>% 
   filter(entidad=="31")
@@ -25,10 +25,10 @@ ConcYucatan$Nhog <- 1
 attach(ConcYucatan) #this is for not writing the name of the data frame and the $ ever time
 
 #Sort Conc according to INGCOR, FOLIOVIV, FOLIOHOG
-ConcYucatan<- orderBy (~+INGCOR+FOLIOVIV+FOLIOHOG, data=ConcYucatan) #this give us the households sorted by total income
+ConcYucatan<- orderBy (~+ing_cor+folioviv+foliohog, data=ConcYucatan) #this give us the households sorted by total income
 
 #Adding the values of the expansion FACTOR. The sum is 34 million, which is the number of households in the country.
-tot_hogares<-sum(ConcYucatan$FACTOR,to.data.frame=TRUE)
+tot_hogares<-sum(ConcYucatan$factor,to.data.frame=TRUE)
 
 #Dividing the number of households into 10 without decimals
 tam_dec<-trunc(tot_hogares/10) #the result is 3.5 million housholds per decile
@@ -38,11 +38,11 @@ ConcYucatan$tam_dec<-tam_dec
 
 # Creating Deciles of Income 
 
-ConcYucatan$MAXT<-ConcYucatan$INGCOR #vamos a crear en esta base la variable MAXT que es una copia de la columna de ingresos
+ConcYucatan$MAXT<-ConcYucatan$ing_cor #vamos a crear en esta base la variable MAXT que es una copia de la columna de ingresos
 
 ConcYucatan<-ConcYucatan[with(ConcYucatan, order(rank(MAXT))),]  #lo que hicimos aqu? fue reordenar la base con respecto a MAXT. Cosa que en realidad, ya estaba.
 
-ConcYucatan$ACUMULA<-cumsum(ConcYucatan$FACTOR) #aqu? creamos una variable de suma acumulada del FACTOR de viviendas.
+ConcYucatan$ACUMULA<-cumsum(ConcYucatan$factor) #aqu? creamos una variable de suma acumulada del FACTOR de viviendas.
 
 
 
@@ -52,17 +52,17 @@ ConcYucatan$ACUMULA<-cumsum(ConcYucatan$FACTOR) #aqu? creamos una variable de su
 #no se que es esto de a1 y b1. Pero s? e simportante. Los resultados cmabian por poquito si no lo haces 
 for(i in 1:9)
 {
-  a1<-ConcYucatan[dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1,]$FACTOR
+  a1<-ConcYucatan[dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1,]$factor
   ConcYucatan<-rbind(ConcYucatan[1:(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1),],
-                    ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1):dim(ConcYucatan[1])[1],])
+                      ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1):dim(ConcYucatan[1])[1],])
   
   b1<-tam_dec*i-ConcYucatan[dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1],]$ACUMULA
-  ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1),]$FACTOR<-b1
-  ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+2),]$FACTOR<-(a1-b1)
+  ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1),]$factor<-b1
+  ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+2),]$factor<-(a1-b1)
 }
 
 #aqu? estamos creando otra variable de suma acumulada del n?mero de hogares
-ConcYucatan$ACUMULA2<-cumsum(ConcYucatan$FACTOR)
+ConcYucatan$ACUMULA2<-cumsum(ConcYucatan$factor)
 
 #aqu? estamos creando una variable que se llama decil que solo tiene ceros
 ConcYucatan$DECIL<-0
@@ -83,14 +83,14 @@ for(i in 1:9)
 ConcYucatan[ConcYucatan$DECIL%in%"0",]$DECIL<-10
 
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
-write.dbf(ConcYucatan,file="ConcYucatan2008.dbf")
+write.dbf(ConcYucatan,file="ConcYucatan2010.dbf")
 
 rm(list=ls())
 
 ########## Creación base 2018 ############
 
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/ENIGH 2018/ENIGH2018")
-Conc<-read.dbf("Conc.dbf",as.is = T)
+Conc<-read.dbf("Conc2018.dbf",as.is = T)
 
 
 ConcYucatan<-Conc%>% 
@@ -99,7 +99,6 @@ ConcYucatan<-Conc%>%
 
 
 remove(Conc)
-
 
 #apparently this is a "flag", IDK what is this shit yet
 ConcYucatan$Nhog <- 1
@@ -140,7 +139,7 @@ for(i in 1:9)
 {
   a1<-ConcYucatan[dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1,]$factor
   ConcYucatan<-rbind(ConcYucatan[1:(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1),],
-                    ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1):dim(ConcYucatan[1])[1],])
+                      ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1):dim(ConcYucatan[1])[1],])
   b1<-tam_dec*i-ConcYucatan[dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1],]$ACUMULA
   ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+1),]$factor<-b1
   ConcYucatan[(dim(ConcYucatan[ConcYucatan$ACUMULA<tam_dec*i,])[1]+2),]$factor<-(a1-b1)
@@ -174,7 +173,7 @@ rm(list=ls())
 
 
 
-########## Creación tablas ingresos total 2008 #######
+########## Creación tablas ingresos total 2010 #######
 
 library(foreign)
 library(survey)
@@ -185,9 +184,16 @@ options(survey.lonely.psu="adjust")
 
 #reading the data
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
-Conc2008<-read.dbf("ConcYucatan2008.dbf",as.is = T)
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
 
-mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2008,weights=~FACTOR)
+names(Conc2010)<-c("ENTIDAD","FOLIOVIV","FOLIOHOG","TOT_INTEG","INGCOR","INGTRAB",
+                   "TRABAJO","NEGOCIO","OTROS_TRAB","RENTAS","UTILIDAD","ARRENDA",
+                   "TRANSFER","JUBILA","BECA","DONATIVO","REMESA","BENE_GOB",
+                   "ESP_HOG","ESP_INST","ESTI","OTROS","FACTOR","UPM",
+                   "EST_DIS","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
+                   "MAXT","ACUMULA","ACUMULA2","DECIL")
+
+mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2010,weights=~FACTOR)
 
 #vamos por el ingreso corriente total del pa?s
 # ing_ cor se define como La suma de las variables ingtrab, rentas, transfer, estim_alqu y otros_ing.
@@ -604,13 +610,13 @@ DECILES<-c("PROMEDIO", "I", "II", "III","IV", "V", "VI", "VII", "VIII", "IX","X"
 row.names(c_DECIL_ES)<-row.names(c_DECIL_SE)<-row.names(c_DECIL_CV)<-row.names(c_DECIL_LI)<-row.names(c_DECIL_LS)<-DECILES
 
 #ahora vamos a ponerle nombre a las columnas
-names(c_DECIL_ES)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_ES)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_SE)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_SE)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_CV)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_CV)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_LI)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_LI)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
 names(c_DECIL_LS)=c("ING COR", "TRABAJO", "SUBORDINADO", "NEGOCIOS","OTROS TRAB", "RENTAS","UTILIDAD", "ARRENDA", "TRANSFER","JUBILACION", "BECAS", "DONATIVOS", "REMESAS", "BENEGOBIERNO", "TRANS HOG", "TRANS INST", "ESTIM ALQU", "OTROS INGRESOS")
 
@@ -625,15 +631,15 @@ round(c_DECIL_LS)
 
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
 
-write.dbf(c_DECIL_ES,file = "Yucatan por fuente por DECIL estimaciones 2008.dbf")
-write.dbf(c_DECIL_SE,file = "Yucatan por fuente por DECIL errores standard 2008.dbf")
-write.dbf(c_DECIL_CV,file = "Yucatan por fuente por DECIL CV 2008.dbf")
-write.dbf(c_DECIL_LI,file = "Yucatan por fuente por DECIL LI 2008.dbf")
-write.dbf(c_DECIL_ES,file = "Yucatan por fuente por DECIL LS 2008.dbf")
+write.dbf(c_DECIL_ES,file = "Yucatan por fuente por DECIL estimaciones 2010.dbf")
+write.dbf(c_DECIL_SE,file = "Yucatan por fuente por DECIL errores standard 2010.dbf")
+write.dbf(c_DECIL_CV,file = "Yucatan por fuente por DECIL CV 2010.dbf")
+write.dbf(c_DECIL_LI,file = "Yucatan por fuente por DECIL LI 2010.dbf")
+write.dbf(c_DECIL_ES,file = "Yucatan por fuente por DECIL LS 2010.dbf")
 
 rm(list = ls())
 
-########## Ingresos por fuente por decil INDIGENA 2008 ############
+########## Ingresos por fuente por decil INDIGENA 2010 ############
 
 library(foreign)
 library(survey)
@@ -644,12 +650,20 @@ options(survey.lonely.psu="adjust")
 
 #reading the data
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
-Conc2008<-read.dbf("ConcYucatan2008.dbf",as.is = T)
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
 
-Conc2008<-Conc2008 %>%
-  filter(HogarIndig==1)
+names(Conc2010)<-c("ENTIDAD","FOLIOVIV","FOLIOHOG","TOT_INTEG","INGCOR","INGTRAB",
+                   "TRABAJO","NEGOCIO","OTROS_TRAB","RENTAS","UTILIDAD","ARRENDA",
+                   "TRANSFER","JUBILA","BECA","DONATIVO","REMESA","BENE_GOB",
+                   "ESP_HOG","ESP_INST","ESTI","OTROS","FACTOR","UPM",
+                   "EST_DIS","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
+                   "MAXT","ACUMULA","ACUMULA2","DECIL")
 
-mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2008,weights=~FACTOR)
+
+Conc2010<-Conc2010 %>%
+  filter(HOGARINDIG==1)
+
+mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2010,weights=~FACTOR)
 
 #vamos por el ingreso corriente total del pa?s
 # ing_ cor se define como La suma de las variables ingtrab, rentas, transfer, estim_alqu y otros_ing.
@@ -1066,13 +1080,13 @@ DECILES<-c("PROMEDIO", "I", "II", "III","IV", "V", "VI", "VII", "VIII", "IX","X"
 row.names(c_DECIL_ES)<-row.names(c_DECIL_SE)<-row.names(c_DECIL_CV)<-row.names(c_DECIL_LI)<-row.names(c_DECIL_LS)<-DECILES
 
 #ahora vamos a ponerle nombre a las columnas
-names(c_DECIL_ES)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_ES)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_SE)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_SE)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_CV)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_CV)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_LI)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_LI)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
 names(c_DECIL_LS)=c("ING COR", "TRABAJO", "SUBORDINADO", "NEGOCIOS","OTROS TRAB", "RENTAS","UTILIDAD", "ARRENDA", "TRANSFER","JUBILACION", "BECAS", "DONATIVOS", "REMESAS", "BENEGOBIERNO", "TRANS HOG", "TRANS INST", "ESTIM ALQU", "OTROS INGRESOS")
 
@@ -1087,15 +1101,15 @@ round(c_DECIL_LS)
 
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
 
-write.dbf(c_DECIL_ES,file = "Yucatan INDIGENA por fuente por DECIL estimaciones 2008.dbf")
-write.dbf(c_DECIL_SE,file = "Yucatan INDIGENA por fuente por DECIL errores standard 2008.dbf")
-write.dbf(c_DECIL_CV,file = "Yucatan INDIGENA por fuente por DECIL CV 2008.dbf")
-write.dbf(c_DECIL_LI,file = "Yucatan INDIGENA por fuente por DECIL LI 2008.dbf")
-write.dbf(c_DECIL_ES,file = "Yucatan INDIGENA por fuente por DECIL LS 2008.dbf")
+write.dbf(c_DECIL_ES,file = "Yucatan INDIGENA por fuente por DECIL estimaciones 2010.dbf")
+write.dbf(c_DECIL_SE,file = "Yucatan INDIGENA por fuente por DECIL errores standard 2010.dbf")
+write.dbf(c_DECIL_CV,file = "Yucatan INDIGENA por fuente por DECIL CV 2010.dbf")
+write.dbf(c_DECIL_LI,file = "Yucatan INDIGENA por fuente por DECIL LI 2010.dbf")
+write.dbf(c_DECIL_ES,file = "Yucatan INDIGENA por fuente por DECIL LS 2010.dbf")
 
 rm(list = ls())
 
-########## Ingresos por fuente por decil NO 2008 ############
+########## Ingresos por fuente por decil NO 2010 ############
 
 library(foreign)
 library(survey)
@@ -1106,12 +1120,21 @@ options(survey.lonely.psu="adjust")
 
 #reading the data
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
-Conc2008<-read.dbf("ConcYucatan2008.dbf",as.is = T)
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
 
-Conc2008<-Conc2008 %>%
-  filter(HogarIndig==0)
+names(Conc2010)<-c("ENTIDAD","FOLIOVIV","FOLIOHOG","TOT_INTEG","INGCOR","INGTRAB",
+                   "TRABAJO","NEGOCIO","OTROS_TRAB","RENTAS","UTILIDAD","ARRENDA",
+                   "TRANSFER","JUBILA","BECA","DONATIVO","REMESA","BENE_GOB",
+                   "ESP_HOG","ESP_INST","ESTI","OTROS","FACTOR","UPM",
+                   "EST_DIS","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
+                   "MAXT","ACUMULA","ACUMULA2","DECIL")
 
-mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2008,weights=~FACTOR)
+
+Conc2010<-Conc2010 %>%
+  filter(HOGARINDIG==0)
+
+
+mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2010,weights=~FACTOR)
 
 #vamos por el ingreso corriente total del pa?s
 # ing_ cor se define como La suma de las variables ingtrab, rentas, transfer, estim_alqu y otros_ing.
@@ -1528,13 +1551,13 @@ DECILES<-c("PROMEDIO", "I", "II", "III","IV", "V", "VI", "VII", "VIII", "IX","X"
 row.names(c_DECIL_ES)<-row.names(c_DECIL_SE)<-row.names(c_DECIL_CV)<-row.names(c_DECIL_LI)<-row.names(c_DECIL_LS)<-DECILES
 
 #ahora vamos a ponerle nombre a las columnas
-names(c_DECIL_ES)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_ES)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_SE)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_SE)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_CV)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_CV)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-names(c_DECIL_LI)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(c_DECIL_LI)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
 names(c_DECIL_LS)=c("ING COR", "TRABAJO", "SUBORDINADO", "NEGOCIOS","OTROS TRAB", "RENTAS","UTILIDAD", "ARRENDA", "TRANSFER","JUBILACION", "BECAS", "DONATIVOS", "REMESAS", "BENEGOBIERNO", "TRANS HOG", "TRANS INST", "ESTIM ALQU", "OTROS INGRESOS")
 
@@ -1549,11 +1572,11 @@ round(c_DECIL_LS)
 
 setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
 
-write.dbf(c_DECIL_ES,file = "Yucatan NO por fuente por DECIL estimaciones 2008.dbf")
-write.dbf(c_DECIL_SE,file = "Yucatan NO por fuente por DECIL errores standard 2008.dbf")
-write.dbf(c_DECIL_CV,file = "Yucatan NO por fuente por DECIL CV 2008.dbf")
-write.dbf(c_DECIL_LI,file = "Yucatan NO por fuente por DECIL LI 2008.dbf")
-write.dbf(c_DECIL_ES,file = "Yucatan NO por fuente por DECIL LS 2008.dbf")
+write.dbf(c_DECIL_ES,file = "Yucatan NO por fuente por DECIL estimaciones 2010.dbf")
+write.dbf(c_DECIL_SE,file = "Yucatan NO por fuente por DECIL errores standard 2010.dbf")
+write.dbf(c_DECIL_CV,file = "Yucatan NO por fuente por DECIL CV 2010.dbf")
+write.dbf(c_DECIL_LI,file = "Yucatan NO por fuente por DECIL LI 2010.dbf")
+write.dbf(c_DECIL_ES,file = "Yucatan NO por fuente por DECIL LS 2010.dbf")
 
 rm(list = ls())
 
@@ -2962,32 +2985,30 @@ library(foreign)
 
 setwd(c("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan"))
 
-Deciles2008<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan por fuente por DECIL estimaciones 2008.dbf")
-names(Deciles2008)[1]<-c("ingcor2008")
+Deciles2010<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan por fuente por DECIL estimaciones 2010.dbf")
+names(Deciles2010)[1]<-c("ingcor2010")
 
 Deciles2018<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan Ingresos por fuente por DECIL estimaciones 2018.dbf")
 names(Deciles2018)[1]<-c("ingcor2018")
 
 
-GICTotal<-data.frame(Deciles2008,Deciles2018)
-
-#GICTotal<-GICTotal[-c(1),]
-
+GICTotal<-data.frame(Deciles2010,Deciles2018)
 
 GICTotal<-GICTotal%>%
-  mutate(Rate=((ingcor2018-ingcor2008)/ingcor2008)*100,Deciles=c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"),
+  mutate(Rate=((ingcor2018-ingcor2010)/ingcor2010)*100,Deciles=c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"),
          orden=1:11)
 
-media<-mean(GICTotal$Rate)
-mediana<-median(GICTotal$Rate)
+max<-round(max(GICTotal$Rate),0)
+min<-round(min(GICTotal$Rate),0)
 
 GIC_Yucatan<-GICTotal%>%
   mutate(Deciles=fct_relevel(Deciles,"Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"))%>%
   ggplot(aes(Deciles,Rate))+
   geom_col()+
-  labs(title = "Growth Incidence Curve Yucatan 2008-2018",
+  labs(title = "Growth Incidence Curve Yucatan 2010-2018",
        y="Growth rate (total)",
        x="Decile")+
+  scale_y_continuous(breaks=seq(min,max,1))+
   theme_minimal()
 
 GIC_Yucatan
@@ -3009,19 +3030,19 @@ library(reshape2)
 
 setwd(c("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan"))
 
-Deciles_por_fuente_2008<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan por fuente por DECIL estimaciones 2008.dbf")
+Deciles_por_fuente_2010<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan por fuente por DECIL estimaciones 2010.dbf")
 
-names(Deciles_por_fuente_2008)=c("ING COR2008", "TRABAJO2008", "SUBORDINADO2008", "NEGOCIOS2008","OTROS TRAB2008", "RENTAS2008","UTILIDAD2008", "ARRENDA2008", "TRANSFER2008","JUBILACION2008", "BECAS2008", "DONATIVOS2008", "REMESAS2008", "BENEGOBIERNO2008", "TRANS HOG2008", "TRANS INST2008", "ESTIM ALQU2008", "OTROS INGRESOS2008")
+names(Deciles_por_fuente_2010)=c("ING COR2010", "TRABAJO2010", "SUBORDINADO2010", "NEGOCIOS2010","OTROS TRAB2010", "RENTAS2010","UTILIDAD2010", "ARRENDA2010", "TRANSFER2010","JUBILACION2010", "BECAS2010", "DONATIVOS2010", "REMESAS2010", "BENEGOBIERNO2010", "TRANS HOG2010", "TRANS INST2010", "ESTIM ALQU2010", "OTROS INGRESOS2010")
 
-Deciles_por_fuente_2008<-Deciles_por_fuente_2008%>%
-  mutate(prueba=Deciles_por_fuente_2008$TRABAJO2008+Deciles_por_fuente_2008$RENTAS2008+
-           Deciles_por_fuente_2008$JUBILACION2008+Deciles_por_fuente_2008$BECAS2008+
-           Deciles_por_fuente_2008$DONATIVOS2008+Deciles_por_fuente_2008$REMESAS2008+
-           Deciles_por_fuente_2008$BENEGOBIERNO2008+Deciles_por_fuente_2008$`TRANS HOG2008`+
-           Deciles_por_fuente_2008$`TRANS INST2008`+Deciles_por_fuente_2008$`ESTIM ALQU2008`+
-           Deciles_por_fuente_2008$`OTROS INGRESOS2008`)
+Deciles_por_fuente_2010<-Deciles_por_fuente_2010%>%
+  mutate(prueba=Deciles_por_fuente_2010$TRABAJO2010+Deciles_por_fuente_2010$RENTAS2010+
+           Deciles_por_fuente_2010$JUBILACION2010+Deciles_por_fuente_2010$BECAS2010+
+           Deciles_por_fuente_2010$DONATIVOS2010+Deciles_por_fuente_2010$REMESAS2010+
+           Deciles_por_fuente_2010$BENEGOBIERNO2010+Deciles_por_fuente_2010$`TRANS HOG2010`+
+           Deciles_por_fuente_2010$`TRANS INST2010`+Deciles_por_fuente_2010$`ESTIM ALQU2010`+
+           Deciles_por_fuente_2010$`OTROS INGRESOS2010`)
 
-all.equal(Deciles_por_fuente_2008$`ING COR2008`,Deciles_por_fuente_2008$prueba)
+all.equal(Deciles_por_fuente_2010$`ING COR2010`,Deciles_por_fuente_2010$prueba)
 
 Deciles_por_fuente_2018<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan Ingresos por fuente por DECIL estimaciones 2018.dbf")
 
@@ -3038,116 +3059,116 @@ Deciles_por_fuente_2018<-Deciles_por_fuente_2018%>%
 all.equal(Deciles_por_fuente_2018$`ING COR2018`,Deciles_por_fuente_2018$prueba)
 
 
-Tasa_total<-((Deciles_por_fuente_2018$`ING COR2018`- Deciles_por_fuente_2008$`ING COR2008`)/Deciles_por_fuente_2008$`ING COR2008`)*100
+Tasa_total<-((Deciles_por_fuente_2018$`ING COR2018`- Deciles_por_fuente_2010$`ING COR2010`)/Deciles_por_fuente_2010$`ING COR2010`)*100
 
 
 ########################## Trabajo 
 
-trabajo<-data.frame(trabajo2008=Deciles_por_fuente_2008$TRABAJO2008,
+trabajo<-data.frame(trabajo2010=Deciles_por_fuente_2010$TRABAJO2010,
                     trabajo2018=Deciles_por_fuente_2018$TRABAJO2018,
-                    ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+                    ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                     ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                     Tasa_total)
 
 trabajo<-trabajo%>%
-  mutate(trabajo_aporte=((trabajo2018-trabajo2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(trabajo_aporte=((trabajo2018-trabajo2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Rentas 
-rentas<-data.frame(rentas2008=Deciles_por_fuente_2008$RENTAS2008,rentas2018=Deciles_por_fuente_2018$RENTAS2018,
-                   ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+rentas<-data.frame(rentas2010=Deciles_por_fuente_2010$RENTAS2010,rentas2018=Deciles_por_fuente_2018$RENTAS2018,
+                   ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                    ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                    Tasa_total)
 rentas<-rentas%>%
-  mutate(rentas_aporte=((rentas2018-rentas2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(rentas_aporte=((rentas2018-rentas2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Jubilaciones 
 
-jubilaciones<-data.frame(jubilaciones2008=Deciles_por_fuente_2008$JUBILACION2008,jubilaciones2018=Deciles_por_fuente_2018$JUBILACION2018,
-                         ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+jubilaciones<-data.frame(jubilaciones2010=Deciles_por_fuente_2010$JUBILACION2010,jubilaciones2018=Deciles_por_fuente_2018$JUBILACION2018,
+                         ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                          ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                          Tasa_total)
 jubilaciones<-jubilaciones%>%
-  mutate(jubilaciones_aporte=((jubilaciones2018-jubilaciones2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(jubilaciones_aporte=((jubilaciones2018-jubilaciones2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Becas 
-becas<-data.frame(becas2008=Deciles_por_fuente_2008$BECAS2008,becas2018=Deciles_por_fuente_2018$BECAS2018,
-                  ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+becas<-data.frame(becas2010=Deciles_por_fuente_2010$BECAS2010,becas2018=Deciles_por_fuente_2018$BECAS2018,
+                  ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                   ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                   Tasa_total)
 becas<-becas%>%
-  mutate(becas_aporte=((becas2018-becas2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(becas_aporte=((becas2018-becas2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Donativos 
 
-donativos<-data.frame(donativos2008=Deciles_por_fuente_2008$DONATIVOS2008,donativos2018=Deciles_por_fuente_2018$DONATIVOS2018,
-                      ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+donativos<-data.frame(donativos2010=Deciles_por_fuente_2010$DONATIVOS2010,donativos2018=Deciles_por_fuente_2018$DONATIVOS2018,
+                      ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                       ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                       Tasa_total)
 
 donativos<-donativos%>%
-  mutate(donativos_aporte=((donativos2018-donativos2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(donativos_aporte=((donativos2018-donativos2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Remesas 
 
-remesas<-data.frame(remesas2008=Deciles_por_fuente_2008$REMESAS2008,remesas2018=Deciles_por_fuente_2018$REMESAS2018,
-                    ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+remesas<-data.frame(remesas2010=Deciles_por_fuente_2010$REMESAS2010,remesas2018=Deciles_por_fuente_2018$REMESAS2018,
+                    ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                     ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                     Tasa_total)
 
 remesas<-remesas%>%
-  mutate(remesas_aporte=((remesas2018-remesas2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(remesas_aporte=((remesas2018-remesas2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Benegobierno 
 
-benegobierno<-data.frame(benegob2008=Deciles_por_fuente_2008$BENEGOBIERNO2008,
+benegobierno<-data.frame(benegob2010=Deciles_por_fuente_2010$BENEGOBIERNO2010,
                          benegob2018=Deciles_por_fuente_2018$BENEGOBIERNO2018,
-                         ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+                         ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                          ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                          Tasa_total)
 
 benegobierno<-benegobierno%>%
-  mutate(benegob_aporte=((benegob2018-benegob2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(benegob_aporte=((benegob2018-benegob2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Transdehogares 
 
-transdehogares<-data.frame(transdehogares2008=Deciles_por_fuente_2008$`TRANS HOG2008`, 
+transdehogares<-data.frame(transdehogares2010=Deciles_por_fuente_2010$`TRANS HOG2010`, 
                            transdehogares2018=Deciles_por_fuente_2018$`TRANS HOG2018`,
-                           ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+                           ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                            ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                            Tasa_total)
 
 transdehogares<-transdehogares%>%
-  mutate(transdehogares_aporte=((transdehogares2018-transdehogares2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(transdehogares_aporte=((transdehogares2018-transdehogares2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### instituciones 
 
-instituciones<-data.frame(instituciones2008=Deciles_por_fuente_2008$`TRANS INST2008`, 
+instituciones<-data.frame(instituciones2010=Deciles_por_fuente_2010$`TRANS INST2010`, 
                           instituciones2018=Deciles_por_fuente_2018$`TRANS INST2018`,
-                          ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+                          ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                           ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                           Tasa_total)
 
 instituciones<-instituciones%>%
-  mutate(instituciones_aporte=((instituciones2018-instituciones2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(instituciones_aporte=((instituciones2018-instituciones2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### alquiler 
 
-alquiler<-data.frame(alquiler2008=Deciles_por_fuente_2008$`ESTIM ALQU2008`,alquiler2018=Deciles_por_fuente_2018$`ESTIM ALQU2018`,
-                     ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+alquiler<-data.frame(alquiler2010=Deciles_por_fuente_2010$`ESTIM ALQU2010`,alquiler2018=Deciles_por_fuente_2018$`ESTIM ALQU2018`,
+                     ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                      ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                      Tasa_total)
 alquiler<-alquiler%>%
-  mutate(alquiler_aporte=((alquiler2018-alquiler2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(alquiler_aporte=((alquiler2018-alquiler2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### otros 
 
-otros<-data.frame(otros2008=Deciles_por_fuente_2008$`OTROS INGRESOS2008`,
+otros<-data.frame(otros2010=Deciles_por_fuente_2010$`OTROS INGRESOS2010`,
                   otros2018=Deciles_por_fuente_2018$`OTROS INGRESOS2018`,
-                  ing_cor2008=Deciles_por_fuente_2008$`ING COR2008`,
+                  ing_cor2010=Deciles_por_fuente_2010$`ING COR2010`,
                   ing_cor2018=Deciles_por_fuente_2018$`ING COR2018`,
                   Tasa_total)
 otros<-otros%>%
-  mutate(otros_aporte=((otros2018-otros2008)/((ing_cor2018-ing_cor2008)))*Tasa_total)
+  mutate(otros_aporte=((otros2018-otros2010)/((ing_cor2018-ing_cor2010)))*Tasa_total)
 
 ################################### Cuadro final 
 
@@ -3164,10 +3185,11 @@ cuadro_final<-data.frame(
   "Rent estimate"=alquiler$alquiler_aporte,
   "Others"=otros$otros_aporte)
 
-#cuadro_final<-cuadro_final%>%
-# mutate(Prueba=Labor+Capital+Pensions+Scholarships+Donations+Remittances+Government.transfers+Household.transfers+
-#         Instituion.transfers+Rent.estimate+Others)
+Prueba<-cuadro_final%>%
+  mutate(Prueba=Labor+Capital+Pensions+Scholarships+Donations+Remittances+Government.transfers+Household.transfers+
+           Instituion.transfers+Rent.estimate+Others)
 
+all.equal(Prueba$Prueba,Tasa_total)
 
 
 names(cuadro_final)<-c("Labor","Capital","Pensions","Scholarships","Donations","Remittances","Government transfers",
@@ -3185,31 +3207,32 @@ cuadro_final<-cuadro_final%>%
 cuadro_final<-melt(cuadro_final)
 
 labels<-cuadro_final%>%
-  mutate(labels=ifelse(value>0,value,0))%>%
+  mutate(labels=ifelse(value<0,value,0))%>%
   group_by(Deciles)%>%
-  summarize(sum(labels)+1.5)
+  summarize(sum(labels)-1.5)
 
-labels<-labels$`sum(labels) + 1.5`
+labels<-labels$`sum(labels) - 1.5`
 
 max<-cuadro_final%>%
-  group_by(Deciles)%>%
   mutate(value=ifelse(value>0,value,0))%>%
+  group_by(Deciles)%>%
   summarize(sum(value))
 
 max<-round(max(max$`sum(value)`)+2)
 
 min<-cuadro_final%>%
-  group_by(Deciles)%>%
   mutate(value=ifelse(value<0,value,0))%>%
+  group_by(Deciles)%>%
   summarize(sum(value))
 
 min<-round(min(min$`sum(value)`)-2)
+
 
 GIC<-cuadro_final%>%
   mutate(Deciles=fct_relevel(Deciles,"Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"))%>%
   ggplot(aes(x=Deciles, y=value , fill= variable),position= "dodge")+
   geom_col()+
-  labs(title = "Growth Incidence Curve Yucatan 2008-2018",
+  labs(title = "Growth Incidence Curve Yucatan 2010-2018",
        y="Growth rate (total)",
        x="Decile",
        fill="Source of
@@ -3233,7 +3256,7 @@ GIC<-ggplotly(GIC)
 
 GIC
 
-saveWidget(GIC,fil="GIC_Yucatan_por_fuente.html")
+saveWidget(GIC,fil="GIC_by_source.html")
 
 rm(list=ls())
 
@@ -3250,24 +3273,24 @@ library(ggrepel)
 
 setwd(c("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan"))
 
-deciles2008indigena<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan INDIGENA por fuente por DECIL estimaciones 2008.dbf")
-names(deciles2008indigena)[1]<-c("Indigena2008")
+deciles2010indigena<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan INDIGENA por fuente por DECIL estimaciones 2010.dbf")
+names(deciles2010indigena)[1]<-c("Indigena2010")
 
 deciles2018indigena<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan INDIGENA Ingresos por fuente por DECIL estimaciones 2018.dbf")
 names(deciles2018indigena)[1]<-c("Indigena2018")
 
-deciles2008No<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan NO por fuente por DECIL estimaciones 2008.dbf")
-names(deciles2008No)[1]<-c("No2008")
+deciles2010No<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan NO por fuente por DECIL estimaciones 2010.dbf")
+names(deciles2010No)[1]<-c("No2010")
 
 deciles2018No<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan NO Ingresos por fuente por DECIL estimaciones 2018.dbf")
 names(deciles2018No)[1]<-c("No2018")
 
-GIC_por_raza<-data.frame(deciles2008indigena,deciles2018indigena,deciles2008No,deciles2018No)
+GIC_por_raza<-data.frame(deciles2010indigena,deciles2018indigena,deciles2010No,deciles2018No)
 
 
 GIC_por_raza<-GIC_por_raza%>%
-  mutate("Indigenous"=((Indigena2018-Indigena2008)/Indigena2008)*100,
-         "Non-indigenous"=((No2018-No2008)/No2008)*100,
+  mutate("Indigenous"=((Indigena2018-Indigena2010)/Indigena2010)*100,
+         "Non-indigenous"=((No2018-No2010)/No2010)*100,
          "Deciles"=c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"))
 
 GIC_reducida<-GIC_por_raza%>%
@@ -3279,21 +3302,27 @@ GIC_por_raza_derretida<-GIC_reducida%>%
 GIC_por_raza_derretida$Rates<-as.factor(as.character(GIC_por_raza_derretida$Rates))
 
 
+max<-round(max(GIC_por_raza_derretida$value)+2)
+
+min<-round(min(GIC_por_raza_derretida$value)+2)
+
+
 GIC_por_raza<-GIC_por_raza_derretida%>%
   mutate(Deciles=fct_relevel(Deciles,"Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"))%>%
   ggplot(aes(x=Deciles,y=value,fill=Rates))+
   geom_col(position=position_dodge())+
-  labs(title = "Growth Incidence Curve Yucatan by ethnic group 2008-2018",
+  labs(title = "Growth Incidence Curve Yucatan by ethnic group 2010-2018",
        fill="Ethnic group:",
        y="Growth rate (total)",
        x="Decile")+
+  scale_y_continuous(breaks=seq(min,max,ifelse(abs(max-min)>20,4,1)))+
   theme_minimal()
 
 GIC_por_raza<-ggplotly(GIC_por_raza)
 
 GIC_por_raza
 
-saveWidget(GIC_por_raza,fil="GIC_Yucatan_por_raza.html")
+saveWidget(GIC_por_raza,fil="GIC_Yucatan_by_ethnic_group.html")
 
 rm(list=ls())
 
@@ -3307,15 +3336,17 @@ library(reshape2)
 
 setwd(c("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan"))
 
-Deciles_por_fuente_2008_indigena<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan INDIGENA por fuente por DECIL estimaciones 2008.dbf")
+Deciles_por_fuente_2010_indigena<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan INDIGENA por fuente por DECIL estimaciones 2010.dbf")
 
-names(Deciles_por_fuente_2008_indigena)=c("ING.COR","TRABAJO","SUBORDINADO", "NEGOCIOS","OTROS.TRAB","RENTAS","UTILIDAD","ARRENDA",
-                                          "TRANSFER","JUBILACION","BECAS","DONATIVOS","REMESAS","BENEGOBIER","TRANS.HOG","TRANS.INST","ESTIM.ALQU","OTROS.INGR")
+names(Deciles_por_fuente_2010_indigena)=c("ING.COR","TRABAJO","SUBORDINADO", "NEGOCIOS","OTROS.TRAB",
+                                          "RENTAS","UTILIDAD","ARRENDA","TRANSFER","JUBILACION","BECAS",
+                                          "DONATIVOS","REMESAS","BENEGOBIER","TRANS.HOG","TRANS.INST",
+                                          "ESTIM.ALQU","OTROS.INGR")
 
-Deciles_por_fuente_2008_indigena<-Deciles_por_fuente_2008_indigena%>%
+Deciles_por_fuente_2010_indigena<-Deciles_por_fuente_2010_indigena%>%
   mutate(prueba=TRABAJO+RENTAS+JUBILACION+BECAS+DONATIVOS+REMESAS+BENEGOBIER+TRANS.HOG+TRANS.INST+ESTIM.ALQU+OTROS.INGR)
 
-all.equal(Deciles_por_fuente_2008_indigena$ING.COR,Deciles_por_fuente_2008_indigena$prueba)
+all.equal(Deciles_por_fuente_2010_indigena$ING.COR,Deciles_por_fuente_2010_indigena$prueba)
 
 Deciles_por_fuente_2018_indigena<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan INDIGENA Ingresos por fuente por DECIL estimaciones 2018.dbf")
 
@@ -3328,129 +3359,129 @@ Deciles_por_fuente_2018_indigena<-Deciles_por_fuente_2018_indigena%>%
 all.equal(Deciles_por_fuente_2018_indigena$ING.COR,Deciles_por_fuente_2018_indigena$prueba)
 
 ################################## Indigenous 
-Tasa_total_indigena<-((Deciles_por_fuente_2018_indigena$ING.COR-Deciles_por_fuente_2008_indigena$ING.COR)/
-                        Deciles_por_fuente_2008_indigena$ING.COR)*100
+Tasa_total_indigena<-((Deciles_por_fuente_2018_indigena$ING.COR-Deciles_por_fuente_2010_indigena$ING.COR)/
+                        Deciles_por_fuente_2010_indigena$ING.COR)*100
 
 #### trabajo
 
-Trabajo_indigena<-data.frame(trabajo2008=Deciles_por_fuente_2008_indigena$TRABAJO,
+Trabajo_indigena<-data.frame(trabajo2010=Deciles_por_fuente_2010_indigena$TRABAJO,
                              trabajo2018=Deciles_por_fuente_2018_indigena$TRABAJO,
-                             ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                             ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                              ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                              Tasa_total_indigena)
 
 Trabajo_indigena<-Trabajo_indigena%>%
-  mutate(trabajo_aporte=((trabajo2018-trabajo2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(trabajo_aporte=((trabajo2018-trabajo2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 #### renta
 
-Renta_indigena<-data.frame(renta2008=Deciles_por_fuente_2008_indigena$RENTAS,
+Renta_indigena<-data.frame(renta2010=Deciles_por_fuente_2010_indigena$RENTAS,
                            renta2018=Deciles_por_fuente_2018_indigena$RENTAS,
-                           ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                           ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                            ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                            Tasa_total_indigena)
 
 Renta_indigena<-Renta_indigena%>%
-  mutate(rentas_aporte=((renta2018-renta2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(rentas_aporte=((renta2018-renta2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 #### Jubilaciones
 
-Jubilaciones_indigena<-data.frame(jubilaciones2008=Deciles_por_fuente_2008_indigena$JUBILACION,
+Jubilaciones_indigena<-data.frame(jubilaciones2010=Deciles_por_fuente_2010_indigena$JUBILACION,
                                   jubilaciones2018=Deciles_por_fuente_2018_indigena$JUBILACION,
-                                  ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                                  ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                                   ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                                   Tasa_total_indigena)
 
 Jubilaciones_indigena<-Jubilaciones_indigena%>%
-  mutate(jubilaciones_aporte=((jubilaciones2018-jubilaciones2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(jubilaciones_aporte=((jubilaciones2018-jubilaciones2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ## Becas
 
-Becas_indigena<-data.frame(becas2008=Deciles_por_fuente_2008_indigena$BECAS,
+Becas_indigena<-data.frame(becas2010=Deciles_por_fuente_2010_indigena$BECAS,
                            becas2018=Deciles_por_fuente_2018_indigena$BECAS,
-                           ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                           ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                            ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                            Tasa_total_indigena)
 
 Becas_indigena<-Becas_indigena%>%
-  mutate(becas_aporte=((becas2018-becas2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(becas_aporte=((becas2018-becas2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ## Donativos
 
-Donativos_indigena<-data.frame(donativos2008=Deciles_por_fuente_2008_indigena$DONATIVOS,
+Donativos_indigena<-data.frame(donativos2010=Deciles_por_fuente_2010_indigena$DONATIVOS,
                                donativos2018=Deciles_por_fuente_2018_indigena$DONATIVOS,
-                               ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                               ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                                ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                                Tasa_total_indigena)
 
 Donativos_indigena<-Donativos_indigena%>%
-  mutate(donativos_aporte=((donativos2018-donativos2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(donativos_aporte=((donativos2018-donativos2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ### Remesas
 
-Remesas_indigena<-data.frame(remesas2008=Deciles_por_fuente_2008_indigena$REMESAS,
+Remesas_indigena<-data.frame(remesas2010=Deciles_por_fuente_2010_indigena$REMESAS,
                              remesas2018=Deciles_por_fuente_2018_indigena$REMESAS,
-                             ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                             ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                              ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                              Tasa_total_indigena)
 
 Remesas_indigena<-Remesas_indigena%>%
-  mutate(remesas_aporte=((remesas2018-remesas2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(remesas_aporte=((remesas2018-remesas2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ### Bene Gob
 
-Benegob_indigena<-data.frame(benegob2008=Deciles_por_fuente_2008_indigena$BENEGOBIER,
+Benegob_indigena<-data.frame(benegob2010=Deciles_por_fuente_2010_indigena$BENEGOBIER,
                              benegob2018=Deciles_por_fuente_2018_indigena$BENEGOBIER,
-                             ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                             ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                              ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                              Tasa_total_indigena)
 
 Benegob_indigena<-Benegob_indigena%>%
-  mutate(benegob_aporte=((benegob2018-benegob2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(benegob_aporte=((benegob2018-benegob2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ### Trans de hogares
 
-Trans_hogares_indigena<-data.frame(transdehogares2008=Deciles_por_fuente_2008_indigena$TRANS.HOG,
+Trans_hogares_indigena<-data.frame(transdehogares2010=Deciles_por_fuente_2010_indigena$TRANS.HOG,
                                    transdehogares2018=Deciles_por_fuente_2018_indigena$TRANS.HOG,
-                                   ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                                   ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                                    ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                                    Tasa_total_indigena)
 
 Trans_hogares_indigena<-Trans_hogares_indigena%>%
-  mutate(transdehogares_aporte=((transdehogares2018-transdehogares2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(transdehogares_aporte=((transdehogares2018-transdehogares2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ### Trans de Instituciones
 
-Instituciones_indigena<-data.frame(instituciones2008=Deciles_por_fuente_2008_indigena$TRANS.INST,
+Instituciones_indigena<-data.frame(instituciones2010=Deciles_por_fuente_2010_indigena$TRANS.INST,
                                    instituciones2018=Deciles_por_fuente_2018_indigena$TRANS.INST,
-                                   ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                                   ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                                    ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                                    Tasa_total_indigena)
 
 Instituciones_indigena<-Instituciones_indigena%>%
-  mutate(instituciones_aporte=((instituciones2018-instituciones2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(instituciones_aporte=((instituciones2018-instituciones2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ### Alquiler
 
-Alquiler_indigena<-data.frame(alquiler2008=Deciles_por_fuente_2008_indigena$ESTIM.ALQU,
+Alquiler_indigena<-data.frame(alquiler2010=Deciles_por_fuente_2010_indigena$ESTIM.ALQU,
                               alquiler2018=Deciles_por_fuente_2018_indigena$ESTIM.ALQU,
-                              ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                              ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                               ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                               Tasa_total_indigena)
 
 Alquiler_indigena<-Alquiler_indigena%>%
-  mutate(alquiler_aporte=((alquiler2018-alquiler2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(alquiler_aporte=((alquiler2018-alquiler2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 ### otros
 
-Otros_indigena<-data.frame(otros2008=Deciles_por_fuente_2008_indigena$OTROS.INGR,
+Otros_indigena<-data.frame(otros2010=Deciles_por_fuente_2010_indigena$OTROS.INGR,
                            otros2018=Deciles_por_fuente_2018_indigena$OTROS.INGR,
-                           ing_cor2008=Deciles_por_fuente_2008_indigena$ING.COR,
+                           ing_cor2010=Deciles_por_fuente_2010_indigena$ING.COR,
                            ing_cor2018=Deciles_por_fuente_2018_indigena$ING.COR,
                            Tasa_total_indigena)
 
 Otros_indigena<-Otros_indigena%>%
-  mutate(otros_aporte=((otros2018-otros2008)/((ing_cor2018-ing_cor2008)))*Tasa_total_indigena)
+  mutate(otros_aporte=((otros2018-otros2010)/((ing_cor2018-ing_cor2010)))*Tasa_total_indigena)
 
 Cuadro_indigena<-data.frame(Trabajo_indigena$trabajo_aporte,
                             Renta_indigena$rentas_aporte,
@@ -3484,14 +3515,14 @@ names(Cuadro_indigena)<-c("Labor","Capital","Pensions","Scholarships","Donations
 
 #No indigena                         
 
-Deciles_por_fuente_2008_NO<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan NO por fuente por DECIL estimaciones 2008.dbf")
-names(Deciles_por_fuente_2008_NO)=c("ING.COR","TRABAJO","SUBORDINADO", "NEGOCIOS","OTROS.TRAB","RENTAS","UTILIDAD","ARRENDA",
+Deciles_por_fuente_2010_NO<-read.dbf("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan/Yucatan NO por fuente por DECIL estimaciones 2010.dbf")
+names(Deciles_por_fuente_2010_NO)=c("ING.COR","TRABAJO","SUBORDINADO", "NEGOCIOS","OTROS.TRAB","RENTAS","UTILIDAD","ARRENDA",
                                     "TRANSFER","JUBILACION","BECAS","DONATIVOS","REMESAS","BENEGOBIER","TRANS.HOG","TRANS.INST","ESTIM.ALQU","OTROS.INGR")
 
-Deciles_por_fuente_2008_NO<-Deciles_por_fuente_2008_NO%>%
+Deciles_por_fuente_2010_NO<-Deciles_por_fuente_2010_NO%>%
   mutate(prueba=TRABAJO+RENTAS+JUBILACION+BECAS+DONATIVOS+REMESAS+BENEGOBIER+TRANS.HOG+TRANS.INST+ESTIM.ALQU+OTROS.INGR)
 
-all.equal(Deciles_por_fuente_2008_NO$ING.COR,Deciles_por_fuente_2008_NO$prueba)
+all.equal(Deciles_por_fuente_2010_NO$ING.COR,Deciles_por_fuente_2010_NO$prueba)
 
 ###
 
@@ -3506,133 +3537,133 @@ Deciles_por_fuente_2018_NO<-Deciles_por_fuente_2018_NO%>%
 
 all.equal(Deciles_por_fuente_2018_NO$ING.COR,Deciles_por_fuente_2018_NO$prueba)
 
-Tasa_total_NO<-((Deciles_por_fuente_2018_NO$ING.COR-Deciles_por_fuente_2008_NO$ING.COR)/Deciles_por_fuente_2008_NO$ING.COR)*100
+Tasa_total_NO<-((Deciles_por_fuente_2018_NO$ING.COR-Deciles_por_fuente_2010_NO$ING.COR)/Deciles_por_fuente_2010_NO$ING.COR)*100
 
 
 # Trabajo
 
-Trabajo_NO<-data.frame(trabajo2008=Deciles_por_fuente_2008_NO$TRABAJO,
+Trabajo_NO<-data.frame(trabajo2010=Deciles_por_fuente_2010_NO$TRABAJO,
                        trabajo2018=Deciles_por_fuente_2018_NO$TRABAJO,
-                       ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                       ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                        ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                        Tasa_total_NO)
 
 Trabajo_NO<-Trabajo_NO%>%
-  mutate(Trabajo_aporte=((trabajo2018-trabajo2008)/((ingcor2018-ingcor2008)))*Tasa_total_NO)
+  mutate(Trabajo_aporte=((trabajo2018-trabajo2010)/((ingcor2018-ingcor2010)))*Tasa_total_NO)
 
 
 # Rentas
 
-Rentas_NO<-data.frame(rentas2008=Deciles_por_fuente_2008_NO$RENTAS,
+Rentas_NO<-data.frame(rentas2010=Deciles_por_fuente_2010_NO$RENTAS,
                       rentas2018=Deciles_por_fuente_2018_NO$RENTAS,
-                      ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                      ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                       ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                       Tasa_total_NO)
 
 Rentas_NO<-Rentas_NO%>%
-  mutate(rentas_aporte=((rentas2018-rentas2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(rentas_aporte=((rentas2018-rentas2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 #Jubilacion
 
-Jubilacion_NO<-data.frame(jubilacion2008=Deciles_por_fuente_2008_NO$JUBILACION,
+Jubilacion_NO<-data.frame(jubilacion2010=Deciles_por_fuente_2010_NO$JUBILACION,
                           jubilacion2018=Deciles_por_fuente_2018_NO$JUBILACION,
-                          ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                          ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                           ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                           Tasa_total_NO)
 
 Jubilacion_NO<-Jubilacion_NO%>%
-  mutate(jubilacion_aporte=((jubilacion2018-jubilacion2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(jubilacion_aporte=((jubilacion2018-jubilacion2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 #Becas
 
-Becas_NO<-data.frame(becas2008=Deciles_por_fuente_2008_NO$BECAS,
+Becas_NO<-data.frame(becas2010=Deciles_por_fuente_2010_NO$BECAS,
                      becas2018=Deciles_por_fuente_2018_NO$BECAS,
-                     ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                     ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                      ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                      Tasa_total_NO)
 
 Becas_NO<-Becas_NO%>%
-  mutate(becas_aporte=((becas2018-becas2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(becas_aporte=((becas2018-becas2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 #Remesas
 
-Remesas_NO<-data.frame(remesas2008=Deciles_por_fuente_2008_NO$REMESAS,
+Remesas_NO<-data.frame(remesas2010=Deciles_por_fuente_2010_NO$REMESAS,
                        remesas2018=Deciles_por_fuente_2018_NO$REMESAS,
-                       ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                       ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                        ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                        Tasa_total_NO)
 
 Remesas_NO<-Remesas_NO%>%
-  mutate(becas_aporte=((remesas2018-remesas2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(becas_aporte=((remesas2018-remesas2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 #Donativos
 
-Donativos_NO<-data.frame(donativos2008=Deciles_por_fuente_2008_NO$DONATIVOS,
+Donativos_NO<-data.frame(donativos2010=Deciles_por_fuente_2010_NO$DONATIVOS,
                          donativos2018=Deciles_por_fuente_2018_NO$DONATIVOS,
-                         ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                         ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                          ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                          Tasa_total_NO)
 
 Donativos_NO<-Donativos_NO%>%
-  mutate(donativos_aporte=((donativos2018-donativos2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(donativos_aporte=((donativos2018-donativos2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 #BENEGOBIER
 
-Benegob_NO<-data.frame(bene2008=Deciles_por_fuente_2008_NO$BENEGOBIER,
+Benegob_NO<-data.frame(bene2010=Deciles_por_fuente_2010_NO$BENEGOBIER,
                        bene2018=Deciles_por_fuente_2018_NO$BENEGOBIER,
-                       ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                       ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                        ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                        Tasa_total_NO)
 
 Benegob_NO<-Benegob_NO%>%
-  mutate(bene_aporte=((bene2018-bene2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(bene_aporte=((bene2018-bene2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 #TRANS.HOG
 
-trans_hog_NO<-data.frame(transhog2008=Deciles_por_fuente_2008_NO$TRANS.HOG,
+trans_hog_NO<-data.frame(transhog2010=Deciles_por_fuente_2010_NO$TRANS.HOG,
                          transhog2018=Deciles_por_fuente_2018_NO$TRANS.HOG,
-                         ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                         ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                          ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                          Tasa_total_NO)
 
 trans_hog_NO<-trans_hog_NO%>%
-  mutate(trans_hog_aporte=((transhog2018-transhog2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(trans_hog_aporte=((transhog2018-transhog2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 
 #TRANS.INST
 
-trans_inst_NO<-data.frame(trans_inst2008=Deciles_por_fuente_2008_NO$TRANS.INST,
+trans_inst_NO<-data.frame(trans_inst2010=Deciles_por_fuente_2010_NO$TRANS.INST,
                           trans_inst2018=Deciles_por_fuente_2018_NO$TRANS.INST,
-                          ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                          ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                           ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                           Tasa_total_NO)
 
 trans_inst_NO<-trans_inst_NO%>%
-  mutate(trans_inst_aporte=((trans_inst2018-trans_inst2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(trans_inst_aporte=((trans_inst2018-trans_inst2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 
 #ESTIM.ALQU
 
-Estim_alqu_NO<-data.frame(estim2008=Deciles_por_fuente_2008_NO$ESTIM.ALQU,
+Estim_alqu_NO<-data.frame(estim2010=Deciles_por_fuente_2010_NO$ESTIM.ALQU,
                           estim2018=Deciles_por_fuente_2018_NO$ESTIM.ALQU,
-                          ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                          ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                           ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                           Tasa_total_NO)
 
 Estim_alqu_NO<-Estim_alqu_NO%>%
-  mutate(estim_aporte=((estim2018-estim2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(estim_aporte=((estim2018-estim2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 
 #OTROS.INGR   
 
-Otros_NO<-data.frame(otros2008=Deciles_por_fuente_2008_NO$OTROS.INGR,
+Otros_NO<-data.frame(otros2010=Deciles_por_fuente_2010_NO$OTROS.INGR,
                      otros2018=Deciles_por_fuente_2018_NO$OTROS.INGR,
-                     ingcor2008=Deciles_por_fuente_2008_NO$ING.COR,
+                     ingcor2010=Deciles_por_fuente_2010_NO$ING.COR,
                      ingcor2018=Deciles_por_fuente_2018_NO$ING.COR,
                      Tasa_total_NO)
 
 Otros_NO<-Otros_NO%>%
-  mutate(otors_aporte=((otros2018-otros2008)/(ingcor2018-ingcor2008))*Tasa_total_NO)
+  mutate(otors_aporte=((otros2018-otros2010)/(ingcor2018-ingcor2010))*Tasa_total_NO)
 
 Cuadro_NO<-data.frame(Trabajo_NO$Trabajo_aporte,
                       Rentas_NO$rentas_aporte,
@@ -3707,21 +3738,23 @@ labels_NO<-Cuadro_final%>%
 
 labels_NO<-labels_NO$`sum(labels) + 1.5`
 
-max<-Cuadro_final%>%
+melt_para_max_y_min<-rbind(Cuadro_indigena,Cuadro_NO)
+
+melt_para_max_y_min<-melt(melt_para_max_y_min)
+
+max<-melt_para_max_y_min%>%
   group_by(Deciles)%>%
-  mutate(value=ifelse(value>0,value,0))%>%
+  filter(value>0)%>%
   summarize(sum(value))
 
-max<-round(max(max$`sum(value)`)+2)
+max<-round(max(max$`sum(value)`))
 
-min<-Cuadro_final%>%
+min<-melt_para_max_y_min%>%
   group_by(Deciles)%>%
-  mutate(value=ifelse(value<0,value,0))%>%
+  filter(value<0)%>%
   summarize(sum(value))
 
-min<-round(min(min$`sum(value)`)-2)
-
-
+min<-round(min(min$`sum(value)`))
 
 
 ###### Gráfico
@@ -3732,11 +3765,11 @@ GIC<-ggplot()+
            width = 0.25)+
   geom_col(data = NO_melt, mapping=aes(x=as.numeric(Deciles)+0.15, y=value, fill= as.factor(variable), group=`Ethnic group`),
            width = 0.25)+
-  labs(title = "Yucatan, Growth Incidence Curve by ethnic group, 2008-2018",
+  labs(title = "Yucatan, Growth Incidence Curve by ethnic group, 2010-2018",
        y="Growth rate (total)",
        x="Decile",
        fill="Source of income")+
-  scale_y_continuous(breaks = seq(min,max,1))+
+  scale_y_continuous(breaks = seq(min,max,ifelse(abs(max-min)>0,5,1)))+
   scale_x_continuous(breaks = seq(1,11,1),labels = c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X") )+
   geom_hline(yintercept = 0)+
   theme(axis.text.x = element_blank())+
@@ -3790,21 +3823,6 @@ GIC<-ggplotly(GIC)
 
 GIC
 
-saveWidget(GIC,fil="GIC_Yucatan_por_raza_por_fuente.html")
+saveWidget(GIC,fil="GIC_Yucatan_by_ethnic_group_and_source.html")
 
 rm(list=ls())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
