@@ -82,7 +82,7 @@ for(i in 1:9)
 # a lo que le qued? cero (que es la ?ltima observaci?n), ponle el decil 10
 ConcYucatan[ConcYucatan$DECIL%in%"0",]$DECIL<-10
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 write.dbf(ConcYucatan,file="ConcYucatan2010.dbf")
 
 rm(list=ls())
@@ -166,7 +166,7 @@ for(i in 1:9)
 # a lo que le qued? cero (que es la ?ltima observaci?n), ponle el decil 10
 ConcYucatan[ConcYucatan$DECIL%in%"0",]$DECIL<-10
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 write.dbf(ConcYucatan,file="ConcYucatan2018.dbf")
 
 rm(list=ls())
@@ -183,14 +183,14 @@ library(tidyverse)
 options(survey.lonely.psu="adjust")
 
 #reading the data
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
 
 names(Conc2010)<-c("ENTIDAD","FOLIOVIV","FOLIOHOG","TOT_INTEG","INGCOR","INGTRAB",
                    "TRABAJO","NEGOCIO","OTROS_TRAB","RENTAS","UTILIDAD","ARRENDA",
                    "TRANSFER","JUBILA","BECA","DONATIVO","REMESA","BENE_GOB",
                    "ESP_HOG","ESP_INST","ESTI","OTROS","FACTOR","UPM",
-                   "EST_DIS","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
+                   "EST_DIS","tam_loc","Small","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
                    "MAXT","ACUMULA","ACUMULA2","DECIL")
 
 mydesign <- svydesign(id=~UPM,strata=~EST_DIS,data=Conc2010,weights=~FACTOR)
@@ -504,7 +504,7 @@ LI_Mtrans_instDECIL <- confint(Mtrans_instDECIL,level=0.90)[,1]
 
 LI_Mestim_alquTot <- confint(Mestim_alquTot,level=0.90)[,1]
 LI_Mestim_alquDECIL <- confint(Mestim_alquDECIL,level=0.90)[,1
-                                                            ]
+]
 LI_Motros_ingTot <- confint(Motros_ingTot,level=0.90)[,1]
 LI_Motros_ingDECIL <- confint(Motros_ingDECIL ,level=0.90)[,1]
 
@@ -629,7 +629,7 @@ round(c_DECIL_CV,4)*100
 round(c_DECIL_LI)
 round(c_DECIL_LS)
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 
 write.dbf(c_DECIL_ES,file = "Yucatan por fuente por DECIL estimaciones 2010.dbf")
 write.dbf(c_DECIL_SE,file = "Yucatan por fuente por DECIL errores standard 2010.dbf")
@@ -649,16 +649,15 @@ library(tidyverse)
 options(survey.lonely.psu="adjust")
 
 #reading the data
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
 
 names(Conc2010)<-c("ENTIDAD","FOLIOVIV","FOLIOHOG","TOT_INTEG","INGCOR","INGTRAB",
                    "TRABAJO","NEGOCIO","OTROS_TRAB","RENTAS","UTILIDAD","ARRENDA",
                    "TRANSFER","JUBILA","BECA","DONATIVO","REMESA","BENE_GOB",
                    "ESP_HOG","ESP_INST","ESTI","OTROS","FACTOR","UPM",
-                   "EST_DIS","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
+                   "EST_DIS","tam_loc","Small","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
                    "MAXT","ACUMULA","ACUMULA2","DECIL")
-
 
 Conc2010<-Conc2010 %>%
   filter(HOGARINDIG==1)
@@ -974,7 +973,7 @@ LI_Mtrans_instDECIL <- confint(Mtrans_instDECIL,level=0.90)[,1]
 
 LI_Mestim_alquTot <- confint(Mestim_alquTot,level=0.90)[,1]
 LI_Mestim_alquDECIL <- confint(Mestim_alquDECIL,level=0.90)[,1
-                                                            ]
+]
 LI_Motros_ingTot <- confint(Motros_ingTot,level=0.90)[,1]
 LI_Motros_ingDECIL <- confint(Motros_ingDECIL ,level=0.90)[,1]
 
@@ -1099,7 +1098,7 @@ round(c_DECIL_CV,4)*100
 round(c_DECIL_LI)
 round(c_DECIL_LS)
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 
 write.dbf(c_DECIL_ES,file = "Yucatan INDIGENA por fuente por DECIL estimaciones 2010.dbf")
 write.dbf(c_DECIL_SE,file = "Yucatan INDIGENA por fuente por DECIL errores standard 2010.dbf")
@@ -1119,14 +1118,14 @@ library(tidyverse)
 options(survey.lonely.psu="adjust")
 
 #reading the data
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
 
 names(Conc2010)<-c("ENTIDAD","FOLIOVIV","FOLIOHOG","TOT_INTEG","INGCOR","INGTRAB",
                    "TRABAJO","NEGOCIO","OTROS_TRAB","RENTAS","UTILIDAD","ARRENDA",
                    "TRANSFER","JUBILA","BECA","DONATIVO","REMESA","BENE_GOB",
                    "ESP_HOG","ESP_INST","ESTI","OTROS","FACTOR","UPM",
-                   "EST_DIS","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
+                   "EST_DIS","tam_loc","Small","HOGARINDIG","NOMBRE_ENT","DEFLACTORES","Nhog","TAM_DEC",
                    "MAXT","ACUMULA","ACUMULA2","DECIL")
 
 
@@ -1445,7 +1444,7 @@ LI_Mtrans_instDECIL <- confint(Mtrans_instDECIL,level=0.90)[,1]
 
 LI_Mestim_alquTot <- confint(Mestim_alquTot,level=0.90)[,1]
 LI_Mestim_alquDECIL <- confint(Mestim_alquDECIL,level=0.90)[,1
-                                                            ]
+]
 LI_Motros_ingTot <- confint(Motros_ingTot,level=0.90)[,1]
 LI_Motros_ingDECIL <- confint(Motros_ingDECIL ,level=0.90)[,1]
 
@@ -1570,7 +1569,7 @@ round(c_DECIL_CV,4)*100
 round(c_DECIL_LI)
 round(c_DECIL_LS)
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 
 write.dbf(c_DECIL_ES,file = "Yucatan NO por fuente por DECIL estimaciones 2010.dbf")
 write.dbf(c_DECIL_SE,file = "Yucatan NO por fuente por DECIL errores standard 2010.dbf")
@@ -1590,7 +1589,7 @@ library(tidyverse)
 options(survey.lonely.psu="adjust")
 
 #reading the data
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
 
 mydesign <- svydesign(id=~upm,strata=~est_dis,data=Conc2018,weights=~factor)
@@ -1903,7 +1902,7 @@ LI_Mtrans_instDECIL <- confint(Mtrans_instDECIL,level=0.90)[,1]
 
 LI_Mestim_alquTot <- confint(Mestim_alquTot,level=0.90)[,1]
 LI_Mestim_alquDECIL <- confint(Mestim_alquDECIL,level=0.90)[,1
-                                                            ]
+]
 LI_Motros_ingTot <- confint(Motros_ingTot,level=0.90)[,1]
 LI_Motros_ingDECIL <- confint(Motros_ingDECIL ,level=0.90)[,1]
 
@@ -2031,7 +2030,7 @@ round(c_DECIL_CV,4)*100
 round(c_DECIL_LI)
 round(c_DECIL_LS)
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 
 write.dbf(c_DECIL_ES,file = "Yucatan Ingresos por fuente por DECIL estimaciones 2018.dbf")
 write.dbf(c_DECIL_SE,file = "Yucatan Ingresos por fuente por DECIL errores standard 2018.dbf")
@@ -2055,7 +2054,7 @@ library(tidyverse)
 options(survey.lonely.psu="adjust")
 
 #reading the data
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
 
 Conc2018<-Conc2018 %>%
@@ -2372,7 +2371,7 @@ LI_Mtrans_instDECIL <- confint(Mtrans_instDECIL,level=0.90)[,1]
 
 LI_Mestim_alquTot <- confint(Mestim_alquTot,level=0.90)[,1]
 LI_Mestim_alquDECIL <- confint(Mestim_alquDECIL,level=0.90)[,1
-                                                            ]
+]
 LI_Motros_ingTot <- confint(Motros_ingTot,level=0.90)[,1]
 LI_Motros_ingDECIL <- confint(Motros_ingDECIL ,level=0.90)[,1]
 
@@ -2500,7 +2499,7 @@ round(c_DECIL_CV,4)*100
 round(c_DECIL_LI)
 round(c_DECIL_LS)
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 
 write.dbf(c_DECIL_ES,file = "Yucatan INDIGENA Ingresos por fuente por DECIL estimaciones 2018.dbf")
 write.dbf(c_DECIL_SE,file = "Yucatan INDIGENA Ingresos por fuente por DECIL errores standard 2018.dbf")
@@ -2521,7 +2520,7 @@ library(tidyverse)
 options(survey.lonely.psu="adjust")
 
 #reading the data
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
 
 Conc2018<-Conc2018 %>%
@@ -2838,7 +2837,7 @@ LI_Mtrans_instDECIL <- confint(Mtrans_instDECIL,level=0.90)[,1]
 
 LI_Mestim_alquTot <- confint(Mestim_alquTot,level=0.90)[,1]
 LI_Mestim_alquDECIL <- confint(Mestim_alquDECIL,level=0.90)[,1
-                                                            ]
+]
 LI_Motros_ingTot <- confint(Motros_ingTot,level=0.90)[,1]
 LI_Motros_ingDECIL <- confint(Motros_ingDECIL ,level=0.90)[,1]
 
@@ -2966,7 +2965,7 @@ round(c_DECIL_CV,4)*100
 round(c_DECIL_LI)
 round(c_DECIL_LS)
 
-setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/Yucatan")
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
 
 write.dbf(c_DECIL_ES,file = "Yucatan NO Ingresos por fuente por DECIL estimaciones 2018.dbf")
 write.dbf(c_DECIL_SE,file = "Yucatan NO Ingresos por fuente por DECIL errores standard 2018.dbf")
@@ -2976,6 +2975,77 @@ write.dbf(c_DECIL_ES,file = "Yucatan NO Ingresos por fuente por DECIL LS 2018.db
 
 rm(list=ls())
 
+###### Shared prosperity total #######
+library(foreign)
+library(tidyverse)
+library(plotly)
+library(htmlwidgets)
+library(reshape2)
+
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+
+Deciles2010<-read.dbf("Yucatan por fuente por DECIL estimaciones 2010.dbf")
+names(Deciles2010)[1]<-c("ingcor2010")
+
+Deciles2018<-read.dbf("Yucatan Ingresos por fuente por DECIL estimaciones 2018.dbf")
+names(Deciles2018)[1]<-c("ingcor2018")
+
+GICTotal<-data.frame(Deciles2010,Deciles2018)
+
+
+GICTotal<-GICTotal%>%
+  mutate(Rate=((ingcor2018-ingcor2010)/ingcor2010)*100,Deciles=c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"),
+         orden=1:11)
+
+growth_total<-round(GICTotal$Rate[1],2)
+
+bottom_40<-round(mean(GICTotal$Rate[2:5]),2)
+
+rm(list = ls())
+
+###### shared prosperity non-idigenous #######
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+
+deciles2010No<-read.dbf("Yucatan NO por fuente por DECIL estimaciones 2010.dbf")
+names(deciles2010No)[1]<-c("No2010")
+
+deciles2018No<-read.dbf("Yucatan NO Ingresos por fuente por DECIL estimaciones 2018.dbf")
+names(deciles2018No)[1]<-c("No2018")
+
+GICTotal<-data.frame(deciles2010No,deciles2018No)
+
+
+GICTotal<-GICTotal%>%
+  mutate(Rate=((No2018-No2010)/No2010)*100,Deciles=c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"),
+         orden=1:11)
+
+growth_total<-round(GICTotal$Rate[1],2)
+
+bottom_40<-round(mean(GICTotal$Rate[2:5]),2)
+
+rm(list = ls())
+
+###### shared prosperity idigenous #######
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+
+deciles2010indigena<-read.dbf("Yucatan INDIGENA por fuente por DECIL estimaciones 2010.dbf")
+names(deciles2010indigena)[1]<-c("Indigena2010")
+
+deciles2018indigena<-read.dbf("Yucatan INDIGENA Ingresos por fuente por DECIL estimaciones 2018.dbf")
+names(deciles2018indigena)[1]<-c("Indigena2018")
+
+GICTotal<-data.frame(deciles2010indigena,deciles2018indigena)
+
+
+GICTotal<-GICTotal%>%
+  mutate(Rate=((Indigena2018-Indigena2010)/Indigena2010)*100,Deciles=c("Mean","I","II","III","IV","V","VI","VII","VIII","IX","X"),
+         orden=1:11)
+
+growth_total<-round(GICTotal$Rate[1],2)
+
+bottom_40<-round(mean(GICTotal$Rate[2:5]),2)
+
+rm(list = ls())
 
 ########## GIC total ##############################
 library(tidyverse)
