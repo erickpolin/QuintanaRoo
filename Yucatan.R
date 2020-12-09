@@ -3896,3 +3896,325 @@ GIC
 saveWidget(GIC,fil="GIC_Yucatan_by_ethnic_group_and_source.html")
 
 rm(list=ls())
+
+########## Hogares debajo de la linea de pobreza rural y urbano ######
+
+library(foreign)
+library(tidyverse)
+library(plotly)
+library(htmlwidgets)
+library(reshape2)
+library(survey)
+options(survey.lonely.psu="adjust")
+
+###2010 rurales
+
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan/")
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
+
+Conc2010<-Conc2010%>%
+  mutate(Canasta_rural_extrema=712.77*3,
+         Canasta_rural_moderada=1378.05*3,
+         Canasta_urbana_extrema=1012.12*3,
+         Canasta_urbana_moderada=2185.79*3)
+
+Conc2010<-Conc2010%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2010<-Conc2010%>%
+  filter(Small==1)
+
+design_2010<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2010)
+
+pobreza_rural_extrema_2010<-round(svymean(~pobreza_rural_extrema, design=design_2010)*100,2)
+
+pobreza_rural_extrema_2010
+
+pobreza_rural_moderada_2010<-round(svymean(~pobreza_rural_moderada, design=design_2010)*100,2)
+
+pobreza_rural_moderada_2010
+
+rm(list=ls())
+
+
+#### Urbanos 2010
+
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
+
+
+Conc2010<-Conc2010%>%
+  mutate(Canasta_rural_extrema=712.77*3,
+         Canasta_rural_moderada=1378.05*3,
+         Canasta_urbana_extrema=1012.12*3,
+         Canasta_urbana_moderada=2185.79*3)
+
+Conc2010<-Conc2010%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2010<-Conc2010%>%
+  filter(Small==0)
+
+design_2010<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2010)
+
+pobreza_urbana_extrema_2010<-round(svymean(~pobreza_urbana_extrema, design=design_2010)*100,2)
+
+pobreza_urbana_extrema_2010
+
+pobreza_urbana_moderada_2010<-round(svymean(~pobreza_urbana_moderada, design=design_2010)*100,2)
+
+pobreza_urbana_moderada_2010
+
+rm(list=ls())
+
+##### Rurales 2018
+
+
+library(foreign)
+library(survey)
+library(doBy)
+library(reldist)
+library(tidyverse)
+options(survey.lonely.psu="adjust")
+
+#reading the data
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
+
+Conc2018<-Conc2018%>%
+  mutate(Canasta_rural_extrema=1113.23*3,
+         Canasta_rural_moderada=2008.71*3,
+         Canasta_urbana_extrema=1556.24*3,
+         Canasta_urbana_moderada=3089.37*3)
+
+Conc2018<-Conc2018%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2018<-Conc2018%>%
+  filter(Small==1)
+
+design_2018<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2018)
+
+pobreza_rural_extrema_2018<-round(svymean(~pobreza_rural_extrema, design=design_2018)*100,2)
+
+pobreza_rural_extrema_2018
+
+pobreza_rural_moderada_2018<-round(svymean(~pobreza_rural_moderada, design=design_2018)*100,2)
+
+pobreza_rural_moderada_2018
+
+rm(list=ls())
+
+
+#### urbanos 2018
+
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
+
+Conc2018<-Conc2018%>%
+  mutate(Canasta_rural_extrema=1113.23*3,
+         Canasta_rural_moderada=2008.71*3,
+         Canasta_urbana_extrema=1556.24*3,
+         Canasta_urbana_moderada=3089.37*3)
+
+Conc2018<-Conc2018%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2018<-Conc2018%>%
+  filter(Small==0)
+
+design_2018<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2018)
+
+pobreza_urbana_extrema_2018<-round(svymean(~pobreza_urbana_extrema, design=design_2018)*100,2)
+
+pobreza_urbana_extrema_2018
+
+pobreza_urbana_moderada_2018<-round(svymean(~pobreza_urbana_moderada, design=design_2018)*100,2)
+
+pobreza_urbana_moderada_2018
+
+rm(list=ls())
+
+########## Hogares debajo de la linea de pobreza rural y urbano por raza ######
+
+###2010 rurales
+
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
+
+Conc2010<-Conc2010%>%
+  mutate(Canasta_rural_extrema=712.77*3,
+         Canasta_rural_moderada=1378.05*3,
+         Canasta_urbana_extrema=1012.12*3,
+         Canasta_urbana_moderada=2185.79*3)
+
+Conc2010<-Conc2010%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2010<-Conc2010%>%
+  filter(Small==1)
+
+design_2010<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2010)
+
+pobreza_rural_extrema_2010<-round(svyby(~pobreza_rural_extrema,by=Conc2010$HogarIndig, design=design_2010,svymean)*100,2)
+
+pobreza_rural_extrema_2010
+
+pobreza_rural_moderada_2010<-round(svyby(~pobreza_rural_moderada,by=Conc2010$HogarIndig, design=design_2010,svymean)*100,2)
+
+pobreza_rural_moderada_2010
+
+
+rm(list=ls())
+
+
+#### Urbanos
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2010<-read.dbf("ConcYucatan2010.dbf",as.is = T)
+
+Conc2010<-Conc2010%>%
+  mutate(Canasta_rural_extrema=712.77*3,
+         Canasta_rural_moderada=1378.05*3,
+         Canasta_urbana_extrema=1012.12*3,
+         Canasta_urbana_moderada=2185.79*3)
+
+Conc2010<-Conc2010%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2010<-Conc2010%>%
+  filter(Small==0)
+
+design_2010<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2010)
+
+pobreza_urbana_extrema_2010<-round(svyby(~pobreza_urbana_extrema, by=Conc2010$HogarIndig,design=design_2010,svymean)*100,2)
+
+pobreza_urbana_extrema_2010
+
+pobreza_urbana_moderada_2010<-round(svyby(~pobreza_urbana_moderada, by=Conc2010$HogarIndig, design=design_2010,svymean)*100,2)
+
+pobreza_urbana_moderada_2010
+
+rm(list=ls())
+
+##### Rurales 2018
+
+
+library(foreign)
+library(survey)
+library(doBy)
+library(reldist)
+library(tidyverse)
+options(survey.lonely.psu="adjust")
+
+#reading the data
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
+
+Conc2018<-Conc2018%>%
+  mutate(Canasta_rural_extrema=1113.23*3,
+         Canasta_rural_moderada=2008.71*3,
+         Canasta_urbana_extrema=1556.24*3,
+         Canasta_urbana_moderada=3089.37*3)
+
+Conc2018<-Conc2018%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2018<-Conc2018%>%
+  filter(Small==1)
+
+design_2018<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2018)
+
+pobreza_rural_extrema_2018<-round(svyby(~pobreza_rural_extrema,by=Conc2018$HogarIndig, design=design_2018,svymean)*100,2)
+
+pobreza_rural_extrema_2018
+
+pobreza_rural_moderada_2018<-round(svyby(~pobreza_rural_moderada,by=Conc2018$HogarIndig, design=design_2018,svymean)*100,2)
+
+pobreza_rural_moderada_2018
+
+rm(list=ls())
+
+#### urbanos 2018
+
+setwd("C:/Users/Erick/Dropbox/GIC/GITHUB2018/GIC/Yucatan")
+Conc2018<-read.dbf("ConcYucatan2018.dbf",as.is = T)
+
+
+Conc2018<-Conc2018%>%
+  mutate(Canasta_rural_extrema=1113.23*3,
+         Canasta_rural_moderada=2008.71*3,
+         Canasta_urbana_extrema=1556.24*3,
+         Canasta_urbana_moderada=3089.37*3)
+
+Conc2018<-Conc2018%>%
+  mutate(linea_de_pobreza_rural_extrema=ifelse(Small==1,Canasta_rural_extrema*tot_integ,0),
+         linea_de_pobreza_rural_moderada=ifelse(Small==1,Canasta_rural_moderada*tot_integ,0),
+         linea_de_pobreza_urbana_extrema=ifelse(Small==0,Canasta_urbana_extrema*tot_integ,0),
+         linea_de_pobreza_urbana_moderada=ifelse(Small==0,Canasta_urbana_moderada*tot_integ,0),
+         pobreza_rural_extrema=ifelse(ing_cor<linea_de_pobreza_rural_extrema,1,0),
+         pobreza_rural_moderada=ifelse(ing_cor<linea_de_pobreza_rural_moderada,1,0),
+         pobreza_urbana_extrema=ifelse(ing_cor<linea_de_pobreza_urbana_extrema,1,0),
+         pobreza_urbana_moderada=ifelse(ing_cor<linea_de_pobreza_urbana_moderada,1,0))
+
+Conc2018<-Conc2018%>%
+  filter(Small==0)
+
+design_2018<-svydesign(id=~upm,strata = ~est_dis, weights = ~factor,data = Conc2018)
+
+pobreza_urbana_extrema_2018<-round(svyby(~pobreza_urbana_extrema, by=Conc2018$HogarIndig,design=design_2018, svymean)*100,2)
+
+pobreza_urbana_extrema_2018
+
+pobreza_urbana_moderada_2018<-round(svyby(~pobreza_urbana_moderada,by=Conc2018$HogarIndig, design=design_2018,svymean)*100,2)
+
+pobreza_urbana_moderada_2018
+
